@@ -1,7 +1,7 @@
 #!usr/bin/env python3
 
 # import necessary modules
-import pygame, sys
+import pygame
 
 pygame.init()
 
@@ -32,7 +32,7 @@ class Sprite(pygame.sprite.Sprite):
         self.image.fill(SURFACE_COLOR)
         self.image.set_colorkey(COLOR)
   
-        pygame.draw.rect(self.image,color,pygame.Rect(0, 0, width, height))
+        pygame.draw.rect(self.image, color, pygame.Rect(0, 0, width, height))
   
         self.rect = self.image.get_rect()
 
@@ -83,11 +83,11 @@ def button(msg,x,y,w,h,ic,ac,action=None):
     mouse = pygame.mouse.get_pos()
     click = pygame.mouse.get_pressed()
     if x+w > mouse[0] > x and y+h > mouse[1] > y:
-        pygame.draw.rect(screen, ac,(x,y,w,h))
+        pygame.draw.rect(screen, ac, (x , y, w, h))
         if click[0] == 1 and action != None:
             action()         
     else:
-        pygame.draw.rect(screen, ic,(x,y,w,h))
+        pygame.draw.rect(screen, ic, (x, y, w, h))
     smallText = pygame.font.SysFont("comicsansms",20)
     textSurf, textRect = text_objects(msg, smallText)
     textRect.center = ( (x+(w/2)), (y+(h/2)) )
