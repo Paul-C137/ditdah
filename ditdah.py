@@ -5,13 +5,12 @@ import pygame
 
 pygame.init()
 
+BLUE = (0, 0, 255)
 BLACK = (255, 255, 255)
 WHITE = (0, 0, 0)
 RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 SURFACE_COLOR = (0, 0, 0)
-COLOR = (255, 100, 98)
-
 
 width = round(pygame.display.get_desktop_sizes()[0][0])
 height = round(pygame.display.get_desktop_sizes()[0][1])
@@ -29,8 +28,7 @@ class Sprite(pygame.sprite.Sprite):
         super().__init__()
   
         self.image = pygame.Surface([width, height])
-        self.image.fill(SURFACE_COLOR)
-        self.image.set_colorkey(COLOR)
+        #self.image.fill(SURFACE_COLOR)
   
         pygame.draw.rect(self.image, color, pygame.Rect(0, 0, width, height))
   
@@ -42,11 +40,31 @@ class Sprite(pygame.sprite.Sprite):
     def moveLeft(self, pixels):
         self.rect.x -= pixels
  
-    def moveForward(self, speed):
-        self.rect.y += speed * speed/10
+    def moveForward(self, pixels):
+        self.rect.y += pixels
  
-    def moveBack(self, speed):
-        self.rect.y -= speed * speed/10
+    def moveBack(self, pixels):
+        self.rect.y -= pixels
+
+
+class Bomb(pygame.sprite.Sprite):
+    def __init__(self, color, height, width):
+        super().__init__()
+  
+        self.image = pygame.Surface([width, height])
+  
+        pygame.draw.rect(self.image, color, pygame.Rect(0, 0, width, height))
+  
+        self.rect = self.image.get_rect()
+
+    def fall(self, xpixels, ypixels):
+        self.rect.x -= xpixels
+        self.rect.y += ypixels
+
+    def update(self):
+        self.rect.centery += 5
+        if self.rect.y > 850:
+            self.kill()
 
 def game_intro():
 
@@ -100,7 +118,7 @@ def game_loop():
     plane_.rect.y = 100
 
     # create bomb_ instance of Sprite class
-    bomb_ = Sprite(GREEN, 15, 10)
+    a_bomb = Bomb(GREEN, 15, 10)
 
     all_sprites_list.add(plane_)
 
@@ -116,13 +134,18 @@ def game_loop():
         if plane_.rect.x < 0:
             plane_.rect.x = width
         if plane_.rect.x < width/2 and plane_.rect.x > width/2-15:
-            all_sprites_list.add(bomb_)
-            bomb_.rect.x = plane_.rect.x + 20
-            bomb_.rect.y = 110
-        bomb_.moveForward(5)
-        bomb_.moveLeft(5)
-        if bomb_.rect.x < 0:
-            bomb_.rect.x = width
+            all_sprites_list.add(a_bomb)
+            a_bomb.rect.x = plane_.rect.x + 20
+            a_bomb.rect.y = 110
+        a_bomb.fall(5, 1)
+        if a_bomb.rect.x < 0:
+            a_bomb.rect.x = width
+        if 780 < a_bomb.rect.y < 795:
+            explosion = Sprite(BLUE, 100,100)
+            all_sprites_list.add(explosion)
+            explosion.rect.x = a_bomb.rect.x - 75
+            explosion.rect.y = height - 75
+            explosion.update()
 
         all_sprites_list.update()
         screen.fill(SURFACE_COLOR)
